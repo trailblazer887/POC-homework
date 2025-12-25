@@ -176,3 +176,105 @@ void decrypt(char *data, char const* key){
         }
     }
 }
+
+// 15
+void dollars(char *dest, char const *src){
+    if (*src == '\0' || src == NULL){
+        strcpy(dest, "$0.00");
+        return;
+    }
+    int len = 0;
+    char const *src_copy = src;
+    for (; *src_copy != '\0'; src_copy++){
+        len++;
+    }
+    int remain = (len - 2) % 3;
+    strcpy(dest, "$");
+    if (len == 1){
+        strcat(dest, "0.0");
+        strcat(dest, src);
+        return;
+    }
+    if (len == 2){
+        strcat(dest, "0.");
+        strcat(dest, src);
+        return;
+    }
+    for (int i = 0; i < remain; i++){
+        char temp[2] = {*src++, '\0'};
+        strcat(dest, temp);
+    }
+    int cycle_cnt = (len-2-remain)/3;
+    for (int i = 0; i < cycle_cnt; i++){
+        strcat(dest, ",");
+        for (int j = 0; j < 3; j++){
+            char temp[2] = {*src++, '\0'};
+            strcat(dest, temp);
+        }
+    }
+    strcat(dest, ".");
+    for (int i = 0; i < 2; i++){
+        char temp[2] = {*src++, '\0'};
+        strcat(dest, temp);
+    }
+}
+
+// 16
+int format(char *format_string, char const* digit_string){
+    int behind_dot = 0, empty = 0;
+    int digit_size = strlen(digit_string);
+    int sum = 0; // 记录#的个数
+    if (*digit_string == '\0'){
+        return 0; // 错误处理
+    }
+    const char *fstr_still = format_string, *dstr_still = digit_string; // 保存指针原来位置
+    for (; *format_string != '\0'; format_string++){
+        if (*format_string == '.'){
+            behind_dot = 1;
+        }else if (*fstr_still == '#'){
+            sum++;
+        }
+    } 
+    if (digit_size > sum){ 
+        return 0; // 错误处理
+    }
+    for (; *digit_string != '\0'; digit_string++); // 都移到右边,准备遍历
+    format_string--;
+    digit_string--;
+    for (;fstr_still != format_string; format_string--){
+        if (*format_string == '#'){ // #
+            if (empty){
+                if (behind_dot){
+                    *format_string = '0';
+                }else {
+                    *format_string = '&';
+                }
+            }else {
+                if ((*format_string = *digit_string) == '1'){
+                    empty = 1;
+                }else{
+                    digit_string--;
+                }
+                
+            }
+            
+        }else if (*format_string == ','){ // ,
+            if (empty){
+                *format_string = '&';
+            }
+        }else if (*format_string == '.'){ // .
+            behind_dot = 0;
+            if (empty){
+                *(format_string - 1) = '0';
+            }
+        }
+        
+    }
+    if (*format_string == '#'){ // format首位处理
+        if (empty){
+                *format_string = '&';
+        }else {
+            *format_string = *digit_string;
+        }
+    }
+}
