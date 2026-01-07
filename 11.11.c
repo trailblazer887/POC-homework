@@ -48,3 +48,32 @@ int* int2ls(){
     }
     return ls;
 }
+
+// 3
+char* string(){
+    int len = 100;
+    char *str = malloc(len);
+    if (str == NULL){
+        return NULL;
+    }
+    int ch, cnt = 0;
+    while ((ch = fgetc(stdin)) != EOF){
+        cnt++;
+        if (cnt > len - 1){
+            len += 100;
+            char* temp = realloc(str, len);
+            if (temp == NULL){
+                free(str);
+                return NULL;
+            }
+            str = temp;
+        }
+        str[cnt-1] = (char)ch;
+    }
+    str[cnt] = '\0';
+    char *temp = realloc(str, cnt + 1);
+    if (temp != NULL){
+        str = temp;
+    }
+    return str;
+}
