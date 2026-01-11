@@ -68,3 +68,39 @@ int dll_remove(Dnode *rootp, Dnode *node){
 	}
 	return 0;
 }
+
+// 7
+typedef struct sub_strlink{
+	char value[20];
+	struct sub_strlink * link;
+} Sub_strlink;
+typedef struct strlink{
+	char letter;
+	struct strlink * next_series;
+	Sub_strlink * first_element;
+} Strlink;
+int insert_new_word(Strlink **listp, char *val){
+	//intialize
+	Sub_strlink **rootp = NULL;
+	// find series
+	for (; *listp != NULL && (*listp) -> letter != *val; listp = &((*listp) -> next_series));
+	if (*listp == NULL){
+		return 0;
+	}else{
+		rootp = &((*listp) -> first_element);
+	}
+	// find through the link
+	for (; *rootp != NULL && strcmp((*rootp) -> value, val) < 0; rootp = &((*rootp) -> link));
+	if (*rootp == NULL || strcmp((*rootp) -> value, val) > 0){
+		Sub_strlink *p = malloc(sizeof(Sub_strlink));
+		strcpy(p -> value, val);
+		p -> link = *rootp;
+		*rootp = p;
+		return 1;
+	}
+	if (strcmp((*rootp) -> value, val) == 0){
+		return 0;
+	}
+	// do nothing
+	return 0;
+}
